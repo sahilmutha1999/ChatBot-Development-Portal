@@ -1,0 +1,39 @@
+# Core dependencies
+streamlit>=1.28.0
+python-dotenv>=1.0.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+numpy>=1.24.0
+pandas>=1.5.0
+tqdm>=4.65.0
+
+# Vector Database
+pinecone-client>=2.2.0
+
+# Text Processing & NLP
+sentence-transformers>=2.2.0
+
+# Web Processing
+requests>=2.31.0
+
+# Document Processing  
+python-docx>=0.8.11
+PyPDF2>=3.0.0
+pdfplumber>=0.9.0
+
+# Date & Time Processing
+python-dateutil>=2.8.2
+
+# JSON & Configuration
+ujson>=5.7.0
+toml>=0.10.2
+
+# Environment & Security
+cryptography>=40.0.0
+
+# UI Enhancements
+streamlit-option-menu>=0.3.6
+plotly>=5.14.0 
+
+einops 
+timm

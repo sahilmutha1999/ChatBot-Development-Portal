@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Development Portal - Test Content for Parsing</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border-left: 4px solid #007bff;
+            background-color: #f8f9fa;
+        }
+        .section h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .swim-lane-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .swim-lane-container img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .openapi-content {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        .text-content {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .content-type {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 Development Portal - Test Content Repository</h1>
+        <p style="text-align: center; color: #666; font-style: italic;">
+            This page contains sample content for testing our domain-specific chatbot parsing capabilities
+        </p>
+
+        <!-- TEXT CONTENT SECTION -->
+        <div class="section">
+            <div class="content-type">TEXT CONTENT</div>
+            <h2>Product Ordering System Documentation</h2>
+            <div class="text-content">
+                <h3>Product Ordering System Overview</h3>
+                <p>Our product ordering system is designed to provide a seamless experience from purchase to delivery. Customers can browse through our catalog, add items to their cart, and place orders using a secure checkout process.</p>
+
+                <h3>Inventory Management</h3>
+                <p>Real-time inventory tracking ensures that product availability is always up-to-date. When a customer places an order, the system immediately checks inventory status to confirm whether the item is in stock. This reduces the chances of order delays or cancellations due to stockouts.</p>
+
+                <h3>Payment Verification and Processing</h3>
+                <p>Our platform supports multiple payment methods including credit cards, debit cards, and digital wallets. Every transaction undergoes a validation check to ensure the payment method is legitimate and authorized. Invalid or declined cards automatically trigger a failed transaction response, notifying the customer to use an alternate payment method.</p>
+
+                <h3>Order Validation and Fulfillment</h3>
+                <p>Once an order is placed and payment is confirmed, the fulfillment process begins. The system generates a unique order ID, updates stock levels, and forwards the request to the logistics team for dispatch. Customers receive a confirmation email and tracking information for their shipment.</p>
+
+                <h3>Delivery and Tracking</h3>
+                <p>Orders are shipped via trusted courier services, with real-time tracking available through the user dashboard. Delivery times vary based on location, but our logistics algorithm optimizes routing to ensure timely arrival. Notifications are sent at key milestones, such as dispatch, out for delivery, and successful handover.</p>
+
+                <h3>Order Cancellation Policy</h3>
+                <p>Orders may be canceled automatically if:</p>
+                <ul>
+                    <li>The product is no longer in stock at the time of processing</li>
+                    <li>The payment could not be verified</li>
+                    <li>The customer requests a cancellation before dispatch</li>
+                </ul>
+                <p>All canceled orders are logged, and customers are refunded promptly through the original payment method.</p>
+            </div>
+        </div>
+
+        <!-- SWIM LANE SECTION -->
+        <div class="section">
+            <div class="content-type">SWIM LANE DIAGRAM</div>
+            <h2>Process Flow Diagram</h2>
+            <div class="swim-lane-container">
+                <p><strong>Business Process Flow - Order Management System</strong></p>
+                <img src="media/swim_lane.png" alt="Swim Lane Diagram - Order Management Process Flow" 
+                     title="This swim lane diagram shows the complete order management process flow with different stakeholders and their responsibilities">
+                <p style="margin-top: 15px; color: #666; font-style: italic;">
+                    This diagram illustrates the complete order processing workflow across different departments and stakeholders
+                </p>
+            </div>
+        </div>
+
+    <footer style="text-align: center; margin-top: 40px; padding: 20px; color: #666; border-top: 1px solid #eee;">
+        <p>Content Types: Text Documentation | Swim Lane Diagrams</p>
+    </footer>
+</body>
+</html> 
