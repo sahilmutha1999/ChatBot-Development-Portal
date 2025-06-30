@@ -2,9 +2,11 @@ import asyncio
 from typing import Dict, Any, List
 import logging
 from datetime import datetime
+import time
 
 from .rag_pipeline import RAGPipeline
 from .qa_processor import QAProcessor
+from .evaluation_service import RAGEvaluationService
 
 logger = logging.getLogger(__name__)
 
@@ -16,19 +18,21 @@ class QAPipeline:
         self.logger = logger
         self.rag_pipeline = RAGPipeline()
         self.qa_processor = QAProcessor()
+        self.evaluation_service = RAGEvaluationService()
     
     async def answer_question(self, user_question: str, top_k: int = 3) -> Dict[str, Any]:
         """
-        Complete Q&A pipeline: Question → Vector Search → Gemini → Answer
+        Complete Q&A pipeline: Question → Vector Search → Gemini → Answer → Evaluation
         
         Args:
             user_question: The user's question
-            top_k: Number of top chunks to retrieve from vector search
+            top_k: Number of top chunks to retrieve from vector search (default: 3)
             
         Returns:
-            Dictionary containing the answer, sources, and metadata
+            Dictionary containing the answer, sources, evaluation metrics, and metadata
         """
         try:
+            start_time = time.time()
             self.logger.info(f"Processing question: {user_question[:100]}...")
             
             # Step 1: Vector search to find relevant content
@@ -48,10 +52,22 @@ class QAPipeline:
             self.logger.info("Step 3: Generating follow-up suggestions...")
             suggestions = self.qa_processor.generate_followup_suggestions(user_question, search_results)
             
-            # Step 4: Compile complete response
+            # Step 4: Calculate accuracy metrics
+            processing_time = time.time() - start_time
+            self.logger.info("Step 4: Calculating accuracy metrics...")
+            
+            answer_text = qa_result.get("answer", "")
+            evaluation_metrics = self.evaluation_service.evaluate_query_response(
+                query=user_question,
+                answer=answer_text,
+                retrieved_chunks=search_results,
+                processing_time=processing_time
+            )
+            
+            # Step 5: Compile complete response with evaluation
             complete_response = {
                 "question": user_question,
-                "answer": qa_result.get("answer", ""),
+                "answer": answer_text,
                 "success": qa_result.get("success", False),
                 "confidence": qa_result.get("confidence", "low"),
                 "sources": {
@@ -68,9 +84,11 @@ class QAPipeline:
                     ]
                 },
                 "follow_up_suggestions": suggestions,
+                "accuracy_metrics": evaluation_metrics,
                 "processing_info": {
                     "vector_search_results": len(search_results),
                     "qa_success": qa_result.get("success", False),
+                    "processing_time_seconds": round(processing_time, 3),
                     "processed_at": datetime.now().isoformat()
                 }
             }
@@ -79,7 +97,8 @@ class QAPipeline:
             if "error" in qa_result:
                 complete_response["error"] = qa_result["error"]
             
-            self.logger.info(f"Q&A pipeline completed successfully for question: {user_question[:50]}...")
+            self.logger.info(f"Q&A pipeline completed successfully for question: {user_question[:50]}... "
+                           f"Overall accuracy: {evaluation_metrics.get('overall_accuracy', {}).get('score', 0):.2f}")
             return complete_response
             
         except Exception as e:

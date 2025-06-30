@@ -1,282 +1,71 @@
-# Development Portal Assistant
+# 🤖 Development Portal RAG Chatbot
 
-A domain-specific chatbot for parsing and understanding technical documentation, swim lane diagrams, and OpenAPI specifications. Built with **FastAPI backend** and **Streamlit frontend** with **Pinecone vector search**.
+A domain-specific chatbot that parses **HTML documents**, **swimlane diagrams**, and **OpenAPI specifications** to answer questions using advanced RAG (Retrieval-Augmented Generation) architecture.
 
-## ✨ Features
-
-- **Clean Chat Interface**: ChatGPT-like UI with left-right message flow
-- **Text Parsing**: Intelligent chunking of documentation and API specs
-- **Vector Search**: Pinecone-powered semantic search
-- **Multi-format Support**: HTML, PDF, DOCX, and OpenAPI specifications
-- **Real-time Processing**: Fast document indexing and question answering
-
-## 🏗️ Architecture
+## 🔄 RAG Data Flow
 
 ```
-├── frontend/          # Streamlit chat interface
-├── backend/           # FastAPI server
-│   ├── main.py       # Main API endpoints
-│   ├── services/     # Core services
-│   │   ├── text_parser.py    # Document parsing
-│   │   ├── chunking.py       # Text chunking
-│   │   ├── embeddings.py     # Sentence transformers
-│   │   └── vector_store.py   # Pinecone integration
-│   └── config.py     # Configuration management
-├── test_content.html  # Sample test content
-└── requirements.txt   # Frontend dependencies
+HTML Documents → BeautifulSoup Parsing → Header-based Chunking → 
+Sentence Transformers Embeddings → Pinecone Vector DB → 
+Semantic Search → Gemini 1.5 Flash → Contextual Answers
 ```
+
+## 🛠️ Technologies Used
+
+- **Document Scraping**: BeautifulSoup4, html2text
+- **Content Parsing**: Custom HTML parser with OpenAPI detection
+- **Text Chunking**: Header-based semantic chunking
+- **Image Processing**: Gemini 1.5 Flash for swimlane diagrams
+- **Embeddings**: Sentence Transformers (all-MiniLM-L6-v2)
+- **Vector Database**: Pinecone
+- **LLM**: Google Gemini 1.5 Flash for answer generation
+- **Backend**: FastAPI with real-time accuracy metrics
+- **Frontend**: Streamlit chat interface
 
 ## 🚀 Quick Start
 
-### 1. Environment Setup
-
+### 1. Start Frontend
 ```bash
-# Clone the repository
-git clone <your-repo-url>
-cd ChatBot-Development-Portal
-
-# Create virtual environment
-python -m venv venv
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # macOS/Linux
-```
-
-### 2. Configure Environment
-
-Create a `.env` file in the project root:
-
-```env
-# Required: Pinecone Configuration
-PINECONE_API_KEY=your_pinecone_api_key_here
-PINECONE_INDEX_NAME=dev-portal-chatbot
-
-# Optional: Model Configuration
-EMBEDDING_MODEL=all-MiniLM-L6-v2
-EMBEDDING_DIMENSION=384
-
-# Optional: Advanced Features
-GOOGLE_API_KEY=your_google_api_key_here
-HUGGINGFACE_API_TOKEN=your_huggingface_token_here
-```
-
-### 3. Start Backend Server
-
-```bash
-# Option 1: Using the runner script
-python run_backend.py
-
-# Option 2: Manual setup
-pip install -r backend/requirements.txt
-cd backend
-uvicorn main:app --reload --port 8000
-```
-
-### 4. Start Frontend
-
-```bash
-# Option 1: Using the original runner script
-python run_app.py
-
-# Option 2: Manual setup
-pip install -r requirements.txt
 cd frontend
 streamlit run app.py
 ```
+*Frontend will run on: http://localhost:8501*
 
-### 5. Initialize with Test Content
-
-1. **Backend**: http://localhost:8000
-2. **Frontend**: http://localhost:8501
-3. **API Docs**: http://localhost:8000/docs
-
-**Parse test content:**
-
+### 2. Start Backend (New Terminal)
 ```bash
-# Use the API endpoint to parse test webpage
-curl -X POST "http://localhost:8000/parse-webpage"
+cd backend  
+uvicorn main:app --reload --port 8000
 ```
+*Backend will run on: http://localhost:8000*
 
-## 📖 Usage
-
-### Parsing Content
-
-**Parse HTML content:**
-
-```python
-import requests
-
-response = requests.post("http://localhost:8000/parse", json={
-    "content": "Your document content here",
-    "source": "document_name"
-})
-```
-
-**Parse test webpage:**
-
-```python
-response = requests.post("http://localhost:8000/parse-webpage")
-```
-
-### Asking Questions
-
-Use the Streamlit frontend or API directly:
-
-```python
-response = requests.post("http://localhost:8000/chat", json={
-    "query": "How does payment processing work?"
-})
-```
-
-### Sample Questions
-
-- "What happens when a payment is declined?"
-- "What are the available API endpoints?"
-- "Explain the order management workflow"
-- "How does inventory tracking work?"
-
-## 🔧 Configuration
-
-### Embedding Models
-
-Supported sentence-transformer models:
-
-- `all-MiniLM-L6-v2` (default, 384 dimensions)
-- `all-mpnet-base-v2` (768 dimensions)
-- `multi-qa-MiniLM-L6-cos-v1` (384 dimensions)
-
-### Chunking Parameters
-
-```env
-MAX_CHUNK_SIZE=500      # Maximum characters per chunk
-CHUNK_OVERLAP=50        # Overlap between chunks
-MIN_CHUNK_SIZE=100      # Minimum chunk size
-```
-
-### Vector Search
-
-```env
-DEFAULT_TOP_K=5         # Number of results to return
-SIMILARITY_THRESHOLD=0.7 # Minimum similarity score
-```
-
-## 🛠️ Development
-
-### Project Structure
-
-```
-backend/services/
-├── text_parser.py      # HTML/document parsing
-├── chunking.py         # Intelligent text chunking
-├── embeddings.py       # Sentence transformer embeddings
-└── vector_store.py     # Pinecone vector operations
-```
-
-### Adding New Parsers
-
-1. Extend `TextParser` class in `text_parser.py`
-2. Add new chunking strategies in `chunking.py`
-3. Update API endpoints in `main.py`
-
-### Custom Embedding Models
-
-```python
-# In embeddings.py
-embedding_service = EmbeddingService(model_name="your-model-name")
-```
-
-## 📊 API Endpoints
-
-### Health Check
-
-- `GET /` - Basic health check
-- `GET /health` - Detailed system status
-
-### Content Management
-
-- `POST /parse` - Parse and store content
-- `POST /parse-webpage` - Parse test webpage
-
-### Chat Interface
-
-- `POST /chat` - Ask questions about parsed content
-
-### Vector Operations
-
-- Search is handled automatically during chat requests
-
-## 🎨 Frontend Features
-
-### Clean Chat Interface
-
-- **Right-aligned user messages** (blue gradient)
-- **Left-aligned assistant responses** (white with border)
-- **Auto-scroll** to latest messages
-- **Responsive design** for mobile and desktop
-
-### Real-time Features
-
-- **Typing indicators** during processing
-- **Error handling** with user-friendly messages
-- **Backend connection status**
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-**Backend not starting:**
-
+### 3. Parse Documents (Optional)
+To add new content to the chatbot:
 ```bash
-# Check if port 8000 is available
-netstat -an | findstr 8000
+cd backend
+python run_data_pipeline.py test_content.html --clear-db
+```
+*This parses test content and clears existing vectors*
 
-# Try different port
-uvicorn main:app --port 8001
+## 📋 Environment Setup
+
+Create `.env` file in root directory:
+```env
+PINECONE_API_KEY=your_pinecone_key
+PINECONE_INDEX_NAME=dev-portal-chatbot
+GEMINI_API_KEY=your_gemini_key
 ```
 
-**Pinecone connection errors:**
+## ✨ Features
 
-- Verify API key in `.env` file
-- Check Pinecone index name
-- Ensure you have an active Pinecone account
+- **Real-time Accuracy Metrics** after every query
+- **Multi-modal Content** (Text + Images + API specs)  
+- **Semantic Search** with top-3 chunk retrieval
+- **Professional Chat Interface** with expandable metrics
+- **Automatic Content Detection** (Text/Swimlane/OpenAPI)
 
-**Frontend connection errors:**
+## 💬 Usage
 
-- Ensure backend is running on port 8000
-- Check CORS settings in `backend/main.py`
-
-**Embedding model download:**
-
-- First run downloads the model (~100MB)
-- Ensure stable internet connection
-- Models are cached locally after first download
-
-### Performance Tips
-
-1. **Batch processing**: Use `/parse` endpoint for multiple documents
-2. **Chunking optimization**: Adjust `MAX_CHUNK_SIZE` based on content type
-3. **Vector search**: Use metadata filters for faster queries
-
-## 🚧 Roadmap
-
-- [ ] **Image parsing** for swim lane diagrams
-- [ ] **PDF document support**
-- [ ] **Hugging Face model integration**
-- [ ] **Gemini API integration**
-- [ ] **Advanced chunking strategies**
-- [ ] **User authentication**
-- [ ] **Conversation memory**
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
-
-**Ready to get started?** Run `python run_backend.py` and `python run_app.py` to launch your chatbot! 🚀
+1. Ask questions about your documents
+2. View real-time accuracy scores 
+3. Explore detailed performance metrics
+4. Get AI-powered contextual answers

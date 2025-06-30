@@ -50,7 +50,6 @@ async def get_qa_pipeline():
 # Pydantic models for request/response
 class QuestionRequest(BaseModel):
     question: str
-    top_k: Optional[int] = 3
 
 class QuestionResponse(BaseModel):
     question: str
@@ -59,6 +58,7 @@ class QuestionResponse(BaseModel):
     confidence: str
     sources: Dict[str, Any]
     follow_up_suggestions: List[str]
+    accuracy_metrics: Dict[str, Any]
     processing_info: Dict[str, Any]
     error: Optional[str] = None
 
@@ -119,10 +119,10 @@ async def ask_question(
         if not request.question.strip():
             raise HTTPException(status_code=400, detail="Question cannot be empty")
         
-        # Process the question through the Q&A pipeline
+        # Process the question through the Q&A pipeline (fixed top_k=3)
         result = await pipeline.answer_question(
             user_question=request.question,
-            top_k=request.top_k
+            top_k=3
         )
         print("result: ", result)
         print("result keys:", result.keys())

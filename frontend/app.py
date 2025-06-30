@@ -166,6 +166,70 @@ def make_api_request(endpoint: str, method: str = "GET", data: Dict = None, retr
     
     return {"error": "Max retries exceeded"}
 
+def display_accuracy_metrics(metrics: Dict[str, Any]):
+    """Display accuracy metrics in a compact, visually appealing format"""
+    if not metrics or "overall_accuracy" not in metrics:
+        return
+    
+    overall = metrics.get("overall_accuracy", {})
+    retrieval = metrics.get("retrieval_performance", {})
+    content = metrics.get("content_analysis", {})
+    answer_quality = metrics.get("answer_quality", {})
+    
+    # Overall accuracy display
+    accuracy_score = overall.get("score", 0.5)
+    accuracy_level = overall.get("level", "Medium")
+    accuracy_color = overall.get("color", "orange")
+    
+    # Color mapping for Streamlit
+    color_map = {"green": "🟢", "orange": "🟡", "red": "🔴"}
+    score_icon = color_map.get(accuracy_color, "🟡")
+    
+    with st.expander(f"📊 **Accuracy Metrics** {score_icon} **{accuracy_level}** ({accuracy_score:.1%})", expanded=False):
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.markdown("#### 🎯 Retrieval Quality")
+            hit_rate = retrieval.get("hit_rate", 0)
+            precision = retrieval.get("precision_at_k", 0)
+            mean_sim = retrieval.get("mean_similarity", 0)
+            
+            st.metric("Hit Rate", f"{hit_rate:.1%}")
+            st.metric("Precision@3", f"{precision:.1%}")
+            st.metric("Avg Similarity", f"{mean_sim:.2f}")
+            
+        with col2:
+            st.markdown("#### 📝 Answer Quality")
+            relevance = answer_quality.get("relevance", {})
+            quality_metrics = answer_quality.get("quality_metrics", {})
+            
+            rel_score = relevance.get("relevance_score", 0)
+            faithfulness = quality_metrics.get("faithfulness", 50)
+            completeness = quality_metrics.get("completeness", 50)
+            
+            st.metric("Relevance", f"{rel_score:.1%}")
+            st.metric("Faithfulness", f"{faithfulness:.0f}/100")
+            st.metric("Completeness", f"{completeness:.0f}/100")
+            
+        with col3:
+            st.markdown("#### 🔍 Content Coverage")
+            types_used = content.get("unique_content_types", 0)
+            diversity = content.get("diversity_score", 0)
+            coverage = content.get("coverage_analysis", {})
+            
+            st.metric("Content Types", f"{types_used}/3")
+            st.metric("Diversity Score", f"{diversity:.1%}")
+            
+            # Content type indicators
+            indicators = []
+            if coverage.get("has_text"): indicators.append("📄 Text")
+            if coverage.get("has_image"): indicators.append("🖼️ Image")
+            if coverage.get("has_openapi"): indicators.append("⚙️ API")
+            
+            if indicators:
+                st.write("**Used:** " + " | ".join(indicators))
+
+
 def display_chat_message(message: Dict[str, Any], is_user: bool = False):
     """Display a chat message with proper formatting"""
     message_class = "user-message" if is_user else "bot-message"
@@ -266,7 +330,7 @@ with st.sidebar:
     
     # Quick settings
     st.markdown("### ⚙️ Settings")
-    top_k = st.slider("Results to retrieve", min_value=1, max_value=10, value=3)
+    st.info("🔧 **Fixed Configuration**: Retrieving top 3 most relevant chunks for optimal accuracy")
 
 # Main UI
 st.markdown('<h1 class="main-header">🤖 Development Portal Q&A Assistant</h1>', unsafe_allow_html=True)
@@ -294,9 +358,14 @@ with chat_container:
             if message["type"] == "user":
                 display_chat_message({"content": message["content"]}, is_user=True)
             else:
-                # Display just the answer from the response
+                # Display the answer from the response
                 answer = message["content"].get("answer", "No answer received")
                 display_chat_message({"content": answer}, is_user=False)
+                
+                # Display accuracy metrics if available
+                accuracy_metrics = message["content"].get("accuracy_metrics")
+                if accuracy_metrics:
+                    display_accuracy_metrics(accuracy_metrics)
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.info("👋 Welcome! Ask a question to get started.")
@@ -335,8 +404,7 @@ if ask_button or (question_input and st.session_state.get('enter_pressed')):
                 "/qa/ask",
                 method="POST",
                 data={
-                    "question": question_input,
-                    "top_k": top_k
+                    "question": question_input
                 }
             )
             
